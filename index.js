@@ -1,7 +1,9 @@
 const express = require('express');
-const app = express();
 const cors = require('cors');
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const { ObjectId } = require("mongodb");
 require('dotenv').config()
+const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware
@@ -9,8 +11,6 @@ app.use(cors());
 app.use(express.json());
 
 
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oexcdfc.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -40,6 +40,46 @@ async function run() {
         const query = { category: `${req.params.category}` };
         const cursor = await allToysCollection.find(query).toArray();
         res.send(cursor);
+    })
+
+    // all toy details by using id
+    app.get('/allToy/:id', async (req, res) => {
+        const id = req.params.id;
+        const cursor = { _id: new ObjectId(id) };
+        const result = await allToysCollection.findOne(cursor);
+        // console.log('Toy data', result);
+        res.send(result);
+    });
+
+    // get allAddToy
+    app.get('/allAddToy', async(req, res) => {
+        const result = await allToysCollection.find().toArray();
+        res.send(result);
+    })
+
+    // post all new toy to database
+    app.post('/allAddToy', async(req, res) => {
+        const body = req.body;
+        console.log(body)
+        const result = await allToysCollection.insertOne(body);
+        res.send(result)
+    })
+
+    app.get('/allAddToy', async(req, res) => {
+        console.log(req.query.seller_email);
+        let query = {};
+        if(req.query.seller_email) {
+            query = { seller_email: req.query.seller_email }
+        }
+        const result = await allToysCollection.find(query).toArray();
+        res.send(result);
+    })
+
+    app.get('/allAddToy/:id', async (req, res) => {
+        const id = req.params.id;
+        const cursor = { _id: new ObjectId(id) }
+        const result = await allToysCollection.findOne(cursor);
+        res.send(result);
     })
 
 
