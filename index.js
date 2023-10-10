@@ -62,9 +62,11 @@ async function run() {
         const body = req.body;
         console.log(body)
         const result = await allToysCollection.insertOne(body);
+        console.log(result);
         res.send(result)
     })
 
+    // getting email wise data
     app.get('/allAddToy', async(req, res) => {
         console.log(req.query.seller_email);
         let query = {};
@@ -75,10 +77,43 @@ async function run() {
         res.send(result);
     })
 
+    // see details every toy
     app.get('/allAddToy/:id', async (req, res) => {
         const id = req.params.id;
         const cursor = { _id: new ObjectId(id) }
         const result = await allToysCollection.findOne(cursor);
+        res.send(result);
+    })
+
+
+    app.patch('/allAddToy/:id', async(req, res) => {
+        const body = req.body;
+        console.log(body);
+    })
+
+    // for updating user post toy
+    app.put('/allAddToy/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const body = req.body;
+        const updateToy = {
+            $set: {
+                price: body.price,
+                quantity: body.quantity,
+                description: body.description
+            }
+        }
+
+        const result = await allToysCollection.updateOne( query, updateToy, options );
+        res.send(result);
+    })
+
+    // for delete
+    app.delete('/allAddToy/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id)}
+        const result = await allToysCollection.deleteOne(query);
         res.send(result);
     })
 
