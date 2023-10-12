@@ -66,16 +66,24 @@ async function run() {
         res.send(result)
     })
 
-    // getting email wise data
-    app.get('/allAddToy', async(req, res) => {
-        console.log(req.query.seller_email);
-        let query = {};
-        if(req.query.seller_email) {
-            query = { seller_email: req.query.seller_email }
-        }
-        const result = await allToysCollection.find(query).toArray();
+    // // getting email wise data
+    // app.get('/allAddToy', async(req, res) => {
+    //     console.log(req.query.seller_email);
+    //     let query = {};
+    //     if(req.query.seller_email) {
+    //         query = { seller_email: req.query.seller_email }
+    //     }
+    //     const result = await allToysCollection.find(query).toArray();
+    //     res.send(result);
+    // })
+
+     // 3. GET myToys by email
+     app.get('/allAddToy/:email', async (req, res) => {
+        const result = await allToysCollection.find({ seller_email: req.params.email })
+       //   .sort({createdAt: -});
+          .toArray()
         res.send(result);
-    })
+      });
 
     // see details every toy
     app.get('/allAddToy/:id', async (req, res) => {
@@ -104,7 +112,6 @@ async function run() {
                 description: body.description
             }
         }
-
         const result = await allToysCollection.updateOne( query, updateToy, options );
         res.send(result);
     })
