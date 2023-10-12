@@ -66,6 +66,14 @@ async function run() {
         res.send(result)
     })
 
+    // see details every toy
+    app.get('/allAddToy/:id', async (req, res) => {
+        const id = req.params.id;
+        const cursor = { _id: new ObjectId(id) }
+        const result = await allToysCollection.findOne(cursor);
+        res.send(result);
+    })
+
     // // getting email wise data
     // app.get('/allAddToy', async(req, res) => {
     //     console.log(req.query.seller_email);
@@ -75,47 +83,13 @@ async function run() {
     //     }
     //     const result = await allToysCollection.find(query).toArray();
     //     res.send(result);
+    // // })
+
+    // app.patch('/allAddToy/:id', async(req, res) => {
+    //     const body = req.body;
+    //     console.log(body);
     // })
-
-     // 3. GET myToys by email
-     app.get('/allAddToy/:email', async (req, res) => {
-        const result = await allToysCollection.find({ seller_email: req.params.email })
-       //   .sort({createdAt: -});
-          .toArray()
-        res.send(result);
-      });
-
-    // see details every toy
-    app.get('/allAddToy/:id', async (req, res) => {
-        const id = req.params.id;
-        const cursor = { _id: new ObjectId(id) }
-        const result = await allToysCollection.findOne(cursor);
-        res.send(result);
-    })
-
-
-    app.patch('/allAddToy/:id', async(req, res) => {
-        const body = req.body;
-        console.log(body);
-    })
-
-    // for updating user post toy
-    app.put('/allAddToy/:id', async(req, res) => {
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) };
-        const options = { upsert: true };
-        const body = req.body;
-        const updateToy = {
-            $set: {
-                price: body.price,
-                quantity: body.quantity,
-                description: body.description
-            }
-        }
-        const result = await allToysCollection.updateOne( query, updateToy, options );
-        res.send(result);
-    })
-
+    
     // for delete
     app.delete('/allAddToy/:id', async(req, res) => {
         const id = req.params.id;
@@ -123,6 +97,59 @@ async function run() {
         const result = await allToysCollection.deleteOne(query);
         res.send(result);
     })
+
+    // get allAddToy
+    app.get('/allToys', async(req, res) => {
+        const result = await allToysCollection.find().toArray();
+        res.send(result);
+    })
+
+     // getting myToys by email
+     app.get('/allToys/:email', async (req, res) => {
+        const result = await allToysCollection.find({ seller_email: req.params.email })
+       //   .sort({createdAt: -});
+          .toArray()
+        res.send(result);
+      });
+
+    // for updating user post toy
+    // app.put('/allAddToy/:id', async(req, res) => {
+    //     const id = req.params.id;
+    //     const query = { _id: new ObjectId(id) };
+    //     const options = { upsert: true };
+    //     const body = req.body;
+    //     const updateToy = {
+    //         $set: {
+    //             price: body.price,
+    //             quantity: body.quantity,
+    //             description: body.description
+    //         }
+    //     }
+    //     const result = await allToysCollection.updateOne( query, updateToy, options );
+    //     res.send(result);
+    // })
+
+    app.patch('/allAddToy/:id', async(req, res) => {
+        const body = req.body;
+        console.log(body);
+    })
+
+    app.put('/allAddToy/:id', async (req, res) => {
+        const id = req.params.id;
+        const body = req.body;
+        const filter = { _id: new ObjectId(id) };
+        const updateToy = {
+          $set: {
+          
+            price: body.price,
+            quantity: body.quantity,
+            description: body.description,
+          },
+        };
+        const result = await allToysCollection.updateOne(filter, updateToy);
+        res.send(result);
+      });
+
 
 
     // Send a ping to confirm a successful connection
