@@ -57,6 +57,18 @@ async function run() {
         res.send(result);
     })
 
+    // searching method with toy name
+    app.get('/allAddToy/:text', async(req, res) => {
+        const query = req.params.text;
+        const result = await allToysCollection.find({
+            $or: [
+                { name: { $regex: query, $options: "i"}}
+            ]
+        }).toArray();
+        
+        res.send(result);
+    })
+
     // post all new toy to database
     app.post('/allAddToy', async(req, res) => {
         const body = req.body;
@@ -155,10 +167,10 @@ async function run() {
         const body = req.body;
   
         try {
-          const filter = { _id: new ObjectId(id) };
-          const updateToy = {
-            $set: {
-              price: body.price,
+            const filter = { _id: new ObjectId(id) };
+            const updateToy = {
+                $set: {
+                price: body.price,
               quantity: body.quantity,
               description: body.description,
             },
@@ -175,8 +187,6 @@ async function run() {
           res.status(500).json({ error: 'Internal server error' });
         }
       });
-
-
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
