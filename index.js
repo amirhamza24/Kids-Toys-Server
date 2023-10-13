@@ -79,7 +79,7 @@ async function run() {
     })
 
     // see details every toy
-    app.get('/allAddToy/:id', async (req, res) => {
+    app.get('/toyDetails/:id', async (req, res) => {
         const id = req.params.id;
         const cursor = { _id: new ObjectId(id) }
         const result = await allToysCollection.findOne(cursor);
@@ -146,47 +146,47 @@ async function run() {
     //     console.log(body);
     // })
 
-    // app.put('/allAddToy/:id', async (req, res) => {
-    //     const id = req.params.id;
-    //     const body = req.body;
-    //     const filter = { _id: new ObjectId(id) };
-    //     const updateToy = {
-    //       $set: {
-          
-    //         price: body.price,
-    //         quantity: body.quantity,
-    //         description: body.description,
-    //       },
-    //     };
-    //     const result = await allToysCollection.updateOne(filter, updateToy);
-    //     res.send(result);
-    //   });
-
     app.put('/allAddToy/:id', async (req, res) => {
         const id = req.params.id;
         const body = req.body;
-  
-        try {
-            const filter = { _id: new ObjectId(id) };
-            const updateToy = {
-                $set: {
-                price: body.price,
-              quantity: body.quantity,
-              description: body.description,
-            },
-          };
-  
-          const result = await allToysCollection.updateOne(filter, updateToy);
-  
-          if (result.matchedCount > 0) {
-            res.json({ message: 'Toy updated successfully' });
-          } else {
-            res.status(404).json({ error: 'Toy not found' });
-          }
-        } catch (error) {
-          res.status(500).json({ error: 'Internal server error' });
-        }
+        const filter = { _id: new ObjectId(id) };
+        const updateToy = {
+          $set: {
+          
+            price: body.price,
+            quantity: body.quantity,
+            description: body.description,
+          },
+        };
+        const result = await allToysCollection.updateOne(filter, updateToy);
+        res.send(result);
       });
+
+    // app.put('/allAddToy/:id', async (req, res) => {
+    //     const id = req.params.id;
+    //     const body = req.body;
+  
+    //     try {
+    //         const filter = { _id: new ObjectId(id) };
+    //         const updateToy = {
+    //             $set: {
+    //             price: body.price,
+    //           quantity: body.quantity,
+    //           description: body.description,
+    //         },
+    //       };
+  
+    //       const result = await allToysCollection.updateOne(filter, updateToy);
+  
+    //       if (result.matchedCount > 0) {
+    //         res.json({ message: 'Toy updated successfully' });
+    //       } else {
+    //         res.status(404).json({ error: 'Toy not found' });
+    //       }
+    //     } catch (error) {
+    //       res.status(500).json({ error: 'Internal server error' });
+    //     }
+    // });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
